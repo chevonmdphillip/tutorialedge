@@ -18,6 +18,6 @@ functions:
 package:
   individually: true
   include:
-    - bin/main
+    - ./bin/**
   exclude:
-    - "./**"
+    - ./**
