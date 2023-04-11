@@ -1,17 +1,33 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
 
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func init() {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	err := r.Run()
+	if err != nil {
+		return
+	} // listen and serve on
+}
+
+func HandleRequest() (events.APIGatewayProxyResponse, error) {
+	return events.APIGatewayProxyResponse{
+		Body:       fmt.Sprintf("Hello from Go!"),
+		StatusCode: 200,
+	}, nil
+}
+
+func main() {
+	lambda.Start(HandleRequest)
 }
