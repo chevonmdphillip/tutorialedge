@@ -1,10 +1,12 @@
+org: chevonphillip
+app: go-serverless-rest-api
 service: go-serverless-rest-api
 frameworkVersion: ">=1.28.0"
 provider:
   name: aws
   runtime: go1.x
   region: us-east-1
-  stage: ${opt:stage}
+  stage: ${opt:stage , 'prod'}
 functions:
   api:
     handler: bin/main
