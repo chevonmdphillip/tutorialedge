@@ -1,30 +1,33 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/gin-gonic/gin"
 )
 
-func init() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	err := r.Run()
-	if err != nil {
-		return
-	} // listen and serve on
-}
+func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	resp := struct {
+		Message string `json:"message"`
+	}{
+		Message: "pong",
+	}
 
-func HandleRequest() (events.APIGatewayProxyResponse, error) {
+	body, err := json.Marshal(resp)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 500,
+			Body:       fmt.Sprintf("Error marshaling JSON: %v", err),
+		}, nil
+	}
+
 	return events.APIGatewayProxyResponse{
-		Body:       fmt.Sprintf("Hello from Go!"),
 		StatusCode: 200,
+		Headers:    map[string]string{"Content-Type": "application/json"},
+		Body:       string(body),
 	}, nil
 }
 
